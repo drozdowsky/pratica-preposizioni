@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Pratica delle Preposizioni</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 60px;
+  }
+
+  .sentence {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+
+  .translation {
+    font-size: 18px;
+    color: gray;
+    margin-bottom: 30px;
+  }
+
+  .answers button {
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .correct {
+    color: green;
+    font-weight: bold;
+  }
+
+  .wrong {
+    color: red;
+    font-weight: bold;
+  }
+
+  .score {
+    margin-top: 40px;
+    font-size: 18px;
+  }
+</style>
+</head>
+<body>
+
+<div class="sentence" id="sentence"></div>
+<div class="translation" id="translation"></div>
+<div class="answers" id="answers"></div>
+<div class="score" id="score"></div>
+
+<script>
+const questions = [
+    ["Parto ____ Roma", "I am off to Rome", "per", "a", "da"],
+    ["Vado ____ scuola", "I go to school", "a", "in", "da"],
+    ["Arrivo ____ Italia", "I arrive in Italy", "in", "a", "da"],
+    ["Vengo ____ te", "I come to you", "da", "a", "in"],
+    ["Sono ____ Polonia", "I am from Poland", "di", "da", "in"],
+    ["Abito ____ Milano", "I live in Milan", "a", "in", "da"],
+    ["Vado ____ cinema", "I go to the cinema", "al", "nel", "dal"],
+    ["Sono ____ ufficio", "I am at the office", "in", "a", "da"],
+    ["Vado ____ medico", "I go to the doctor", "dal", "al", "nel"],
+    ["Il libro è ____ tavolo", "The book is on the table", "sul", "nel", "al"],
+    ["Parlo ____ Marco", "I speak with Marco", "con", "a", "di"],
+    ["Parliamo ____ politica", "We talk about politics", "di", "da", "su"],
+    ["Il regalo è ____ Maria", "The gift is for Maria", "per", "da", "di"],
+    ["Studio ____ università", "I study at university", "all'", "in", "nel"],
+    ["Andiamo ____ ristorante", "We go to the restaurant", "al", "nel", "dal"],
+    ["Vengo ____ lavoro", "I come from work", "dal", "al", "nel"],
+    ["Sono ____ casa", "I am at home", "a", "in", "da"],
+    ["Metto il libro ____ zaino", "I put the book in the backpack", "nello", "sullo", "allo"],
+    ["Siamo ____ vacanza", "We are on vacation", "in", "a", "da"],
+    ["Vado ____ piedi", "I go on foot", "a", "in", "da"],
+    ["Vado ____ macchina", "I go by car", "in", "a", "con"],
+    ["Il film parla ____ amore", "The movie talks about love", "d'", "su", "per"],
+    ["Andiamo ____ mare", "We go to the seaside", "al", "nel", "dal"],
+    ["Abito ____ centro", "I live in the city center", "in", "a", "da"],
+    ["Sono ____ banca", "I am at the bank", "in", "alla", "da"],
+    ["Vado ____ banca", "I go to the bank", "in", "alla", "da"],
+    ["Vengo ____ Milano", "I come from Milan", "da", "di", "in"],
+    ["Il gatto è ____ sedia", "The cat is on the chair", "sulla", "nella", "alla"],
+    ["Il treno parte ____ binario 3", "The train leaves from platform 3", "dal", "al", "nel"],
+    ["Studio ____ mattina", "I study in the morning", "di", "a", "in"],
+    ["Ci vediamo ____ lunedì", "See you on Monday", "...", "di", "a"],
+    ["Vivo ____ Italia", "I live in Italy", "in", "a", "da"],
+    ["Il libro ____ professore", "The professor's book", "del", "dal", "nel"],
+    ["Andiamo ____ amici", "We go to friends' place", "dagli", "agli", "nei"],
+    ["Il regalo viene ____ cuore", "The gift comes from the heart", "dal", "al", "nel"],
+    ["Siamo ____ stazione", "We are at the station", "in", "alla", "da"],
+    ["Vado ____ stazione", "I go to the station", "alla", "nella", "dalla"],
+    ["Il quadro è ____ parete", "The painting is on the wall", "sulla", "nella", "alla"],
+    ["Parlo ____ telefono", "I speak on the phone", "al", "nel", "sul"],
+    ["Sono qui ____ due ore", "I have been here for two hours", "da", "per", "di"],
+    ["Partiamo ____ Napoli", "We leave from Naples", "da", "a", "in"],
+    ["Andiamo ____ Napoli", "We go to Naples", "a", "in", "da"],
+    ["Il libro è ____ zaino", "The book is in the backpack", "nello", "sullo", "allo"],
+    ["Lavoro ____ progetto", "I work on the project", "al", "nel", "sul"],
+    ["Vado ____ farmacia", "I go to the pharmacy", "in", "alla", "da"],
+    ["Il ristorante è ____ centro", "The restaurant is in the center", "in", "al", "nel"],
+    ["Siamo ____ cinema", "We are at the cinema", "al", "nel", "in"],
+    ["Andiamo ____ montagna", "We go to the mountains", "in", "a", "da"],
+    ["Il vino è ____ Italia", "The wine is from Italy", "dell'", "dall'", "nell'"],
+    ["Il cane corre ____ giardino", "The dog runs in the garden", "nel", "sul", "al"],
+    ["Il libro parla ____ storia", "The book talks about history", "di", "su", "per"],
+    ["Andiamo ____ festa", "We go to the party", "alla", "nella", "dalla"],
+    ["Il regalo è ____ mio amico", "The gift is from my friend", "dal", "del", "nel"],
+    ["Vivo ____ campagna", "I live in the countryside", "in", "a", "da"],
+    ["Metto il piatto ____ tavolo", "I put the plate on the table", "sul", "nel", "al"],
+    ["Siamo ____ albergo", "We are at the hotel", "in", "all'", "dal"],
+    ["Vado ____ supermercato", "I go to the supermarket", "al", "nel", "dal"],
+    ["Il libro è ____ scrivania", "The book is on the desk", "sulla", "nella", "alla"],
+    ["Parlo ____ miei genitori", "I speak with my parents", "con", "a", "di"],
+    ["Vivo ____ Stati Uniti", "I live in the United States", "negli", "nei", "in"],
+    ["Sono stato ____ Paesi Bassi", "I have been to the Netherlands", "nei", "negli", "in"],
+    ["Vado ____ Sardegna", "I go to Sardinia", "in", "a", "alla"],
+    ["Vivo ____ Sicilia", "I live in Sicily", "in", "a", "alla"],
+    ["Sono ____ Toscana", "I am in Tuscany", "in", "a", "alla"],
+    ["Vado ____ centro storico", "I go to the historic center", "nel", "al", "in"],
+    ["Il bicchiere è fatto ____ vetro", "The glass is made of glass", "di", "da", "con"],
+    ["Questo tavolo è fatto ____ mio nonno", "This table is made by my grandfather", "da", "di", "con"],
+    ["È una macchina ____ corsa", "It is a racing car", "da", "di", "per"],
+    ["Occhiali ____ sole", "Sunglasses", "da", "di", "per"],
+    ["Parto ____ due giorni", "I am leaving in two days", "tra", "da", "per"],
+    ["Studio italiano ____ tre anni", "I have been studying Italian for three years", "da", "per", "di"],
+    ["Ho studiato italiano ____ tre anni", "I studied Italian for three years", "per", "da", "di"],
+    ["Sono qui ____ lunedì", "I have been here since Monday", "da", "per", "di"],
+    ["Ci vediamo ____ poco", "See you shortly", "tra", "per", "da"],
+    ["Andiamo ____ piedi nudi", "We go barefoot", "a", "in", "con"],
+    ["Sono ____ ritardo", "I am late", "in", "a", "con"],
+    ["Vado ____ pensione", "I retire", "in", "a", "per"],
+    ["Metto tutto ____ ordine", "I put everything in order", "in", "a", "per"],
+    ["Lo faccio ____ te", "I do it for you", "per", "da", "a"],
+    ["Questo regalo è ____ te", "This gift is for you (intended)", "per", "a", "da"],
+    ["Questo libro è ____ leggere", "This book is to read", "da", "per", "di"],
+    ["Ho qualcosa ____ dirti", "I have something to tell you", "da", "per", "di"],
+    ["È difficile ____ capire", "It is difficult to understand", "da", "per", "di"],
+    ["Vado ____ parrucchiere", "I go to the hairdresser", "dal", "al", "nel"],
+    ["Sono ____ parrucchiere", "I am at the hairdresser's", "dal", "al", "nel"],
+    ["Vado ____ letto presto", "I go to bed early", "a", "in", "nel"],
+    ["Sono ____ letto", "I am in bed", "a", "in", "nel"],
+    ["Andiamo ____ estero", "We go abroad", "all'", "in", "al"],
+    ["Vivo ____ estero", "I live abroad", "all'", "in", "al"],
+    ["Il film è basato ____ una storia vera", "The film is based on a true story", "su", "in", "a"],
+    ["Conto ____ di te", "I count on you", "su", "a", "per"],
+    ["Penso spesso ____ te", "I often think about you", "a", "di", "su"],
+    ["Mi occupo ____ marketing", "I deal with marketing", "di", "con", "per"],
+    ["Sono responsabile ____ progetto", "I am responsible for the project", "del", "dal", "nel"],
+    ["Partecipo ____ conferenza", "I participate in the conference", "alla", "nella", "per la"],
+    ["Ho paura ____ buio", "I am afraid of the dark", "del", "dal", "nel"],
+    ["Sono stanco ____ lavorare", "I am tired of working", "di", "da", "per"],
+    ["È bravo ____ matematica", "He is good at math", "in", "a", "per"],
+    ["È bravo ____ giocare a calcio", "He is good at playing football", "a", "in", "per"],
+    ["Sono interessato ____ arte", "I am interested in art", "all'", "in", "per"],
+    ["Mi sono laureato ____ economia", "I graduated in economics", "in", "a", "di"],
+    ["Lavoro ____ lunedì ____ venerdì", "I work from Monday to Friday", "da / a", "di / a", "per / a"],
+    ["Il negozio è aperto ____ 9 ____ 18", "The shop is open from 9 to 18", "dalle / alle", "da / a", "di / a"],
+    ["Abito ____ nord ____ Italia", "I live in the north of Italy", "nel / dell'", "al / dell'", "in / di"],
+    ["È uno dei migliori ____ mondo", "He is one of the best in the world", "del", "nel", "al"],
+    ["Andiamo ____ casa ____ Marco", "We go to Marco's house", "a / di", "alla / di", "a / da"],
+    ["Sono ____ casa ____ Marco", "I am at Marco's house", "a / di", "da / di", "alla / di"],
+    ["Questo è il libro ____ cui ti parlavo", "This is the book I told you about", "di", "a", "su"],
+    ["La città ____ cui vengo è piccola", "The city I come from is small", "da", "di", "a"],
+    ["Il motivo ____ cui sono qui è semplice", "The reason why I am here is simple", "per", "di", "da"],
+    ["È diverso ____ quello che pensi", "It is different from what you think", "da", "di", "a"],
+    ["Sono abituato ____ alzarmi presto", "I am used to getting up early", "a", "di", "per"],
+    ["Mi ricordo ____ te", "I remember you", "di", "a", "su"],
+    ["Mi dimentico sempre ____ chiavi", "I always forget the keys", "delle", "alle", "nelle"],
+    ["È pieno ____ gente", "It is full of people", "di", "da", "con"],
+    ["Sono pronto ____ partire", "I am ready to leave", "a", "di", "per"],
+    ["Non c'è niente ____ fare", "There is nothing to do", "da", "per", "di"],
+    ["Sono contrario ____ questa idea", "I am against this idea", "a", "di", "per"],
+    ["È simile ____ quello", "It is similar to that", "a", "di", "con"],
+    ["Sono d'accordo ____ te", "I agree with you", "con", "a", "di"],
+    ["Non sono d'accordo ____ questa decisione", "I don't agree with this decision", "con", "a", "di"],
+    ["Mi sono dimenticato ____ appuntamento", "I forgot the appointment", "dell'", "all'", "nell'"],
+    ["Hai bisogno ____ aiuto?", "Do you need help?", "di", "da", "a"],
+    ["Ho bisogno ____ parlare con te", "I need to talk to you", "di", "da", "a"],
+    ["Sto pensando ____ cambiare lavoro", "I'm thinking about changing jobs", "di", "a", "su"],
+    ["Sto pensando ____ te", "I'm thinking about you", "a", "di", "su"],
+    ["Mi lamento spesso ____ traffico", "I often complain about traffic", "del", "dal", "nel"],
+    ["Mi occupo ____ clienti internazionali", "I deal with international clients", "di", "con", "per"],
+    ["Mi preoccupo ____ futuro", "I worry about the future", "del", "per il", "sul"],
+    ["Sono felice ____ risultato", "I am happy about the result", "del", "dal", "per il"],
+    ["Sono soddisfatto ____ lavoro", "I am satisfied with the job", "del", "dal", "nel"],
+    ["Dipende ____ situazione", "It depends on the situation", "dalla", "della", "alla"],
+    ["Partecipo spesso ____ riunioni", "I often participate in meetings", "alle", "nelle", "per le"],
+    ["Lavoro ____ remoto", "I work remotely", "da", "in", "a"],
+    ["Sono ____ ferie", "I am on vacation (formal)", "in", "a", "da"],
+    ["Vado ____ ferie", "I go on vacation", "in", "a", "per"],
+    ["Sono ____ pausa pranzo", "I am on lunch break", "in", "a", "da"],
+    ["Ci sentiamo ____ telefono", "We talk on the phone", "per", "a", "in"],
+    ["Ti scrivo ____ email", "I write to you by email", "per", "a", "in"],
+    ["Pago ____ carta", "I pay by card", "con", "in", "a"],
+    ["Pago ____ contanti", "I pay in cash", "in", "con", "a"],
+    ["È vietato fumare ____ ufficio", "Smoking is forbidden in the office", "in", "a", "nel"],
+    ["Metti il documento ____ cartella", "Put the document in the folder", "nella", "alla", "sulla"],
+    ["Il documento è ____ cartella", "The document is in the folder", "nella", "alla", "sulla"],
+    ["Sono interessato ____ offerta", "I am interested in the offer", "all'", "in", "per"],
+    ["Sono contrario ____ proposta", "I am against the proposal", "alla", "della", "per la"],
+    ["Mi candido ____ posizione", "I apply for the position", "alla", "per la", "nella"],
+    ["Rispondo ____ email", "I reply to the email", "alla", "nella", "per la"],
+    ["Salgo ____ autobus", "I get on the bus", "sull'", "nell'", "all'"],
+    ["Scendo ____ autobus", "I get off the bus", "dall'", "all'", "nell'"],
+    ["Sono in ritardo ____ lavoro", "I am late for work", "per il", "al", "nel"],
+    ["Vado ____ ritardo", "I am running late", "in", "a", "con"],
+    ["Mi scuso ____ ritardo", "I apologize for the delay", "per il", "del", "al"],
+    ["Sono pronto ____ riunione", "I am ready for the meeting", "per la", "alla", "della"],
+    ["Mi preparo ____ esame", "I prepare for the exam", "all'", "per l'", "nell'"],
+    ["Mi ricordo sempre ____ compleanno", "I always remember the birthday", "del", "al", "nel"],
+    ["Mi dimentico spesso ____ password", "I often forget the password", "della", "alla", "nella"],
+    ["È responsabile ____ team", "He is responsible for the team", "del", "dal", "nel"],
+    ["Sono stufo ____ aspettare", "I'm fed up with waiting", "di", "da", "per"],
+    ["Mi accorgo ____ errore", "I notice the mistake", "dell'", "all'", "nell'"],
+    ["Ho paura ____ perdere il lavoro", "I'm afraid of losing my job", "di", "da", "per"],
+    ["Sono sicuro ____ decisione", "I am sure about the decision", "della", "alla", "per la"],
+    ["Mi fido ____ te", "I trust you", "di", "a", "con"],
+    ["Mi innamoro ____ persona sbagliata", "I fall in love with the wrong person", "della", "alla", "con la"],
+    ["Litigo spesso ____ mio fratello", "I often argue with my brother", "con", "a", "di"],
+    ["Mi arrabbio ____ te", "I get angry with you", "con", "a", "di"],
+    ["Mi arrabbio ____ situazione", "I get angry about the situation", "per la", "con la", "alla"],
+    ["Sono grato ____ aiuto", "I am grateful for the help", "per l'", "all'", "dell'"],
+    ["Mi congratulo ____ te", "I congratulate you", "con", "a", "di"],
+    ["Mi scordo sempre ____ spegnere la luce", "I always forget to turn off the light", "di", "da", "a"],
+    ["È difficile abituarsi ____ nuovo lavoro", "It's difficult to get used to the new job", "al", "nel", "del"],
+    ["Mi abituo ____ nuova routine", "I get used to the new routine", "alla", "nella", "per la"],
+    ["Sono curioso ____ sapere di più", "I am curious to know more", "di", "da", "per"],
+    ["Mi sorprendo ____ reazione", "I am surprised by the reaction", "della", "alla", "per la"],
+    ["Mi concentro ____ lavoro", "I focus on work", "sul", "nel", "al"],
+    ["Mi confondo ____ numeri", "I get confused with numbers", "con", "a", "di"],
+    ["Sono stressato ____ lavoro", "I am stressed because of work", "per il", "dal", "nel"],
+    ["Sono ____ fila da mezz'ora", "I've been in line for half an hour", "in", "a", "alla"],
+    ["Aspetto ____ te", "I'm waiting for you", "-", "a", "di"],
+    ["Aspetto ____ autobus", "I'm waiting for the bus", "l'", "al", "per l'"],
+    ["Lavoro ____ remoto", "I work remotely", "da", "in", "a"],
+    ["Sono ____ smart working", "I am working remotely", "in", "a", "da"],
+    ["Pago ____ carta", "I pay by card", "con la", "alla", "per la"],
+    ["Pago ____ contanti", "I pay in cash", "in", "con", "a"],
+    ["Ho prenotato un tavolo ____ due persone", "I booked a table for two people", "per", "a", "da"],
+    ["È tutto pronto ____ partire", "Everything is ready to leave", "per", "a", "da"],
+    ["Non sono pronto ____ questa situazione", "I'm not ready for this situation", "per", "a", "di"],
+    ["Mi sono iscritto ____ palestra", "I signed up at the gym", "in", "alla", "per la"],
+    ["Mi sono iscritto ____ corso", "I signed up for the course", "al", "nel", "per il"],
+    ["Ho bisogno ____ aiuto", "I need help", "di", "da", "per"],
+    ["C'è bisogno ____ parlare", "There is a need to talk", "di", "da", "per"],
+    ["Sono d'accordo ____ te", "I agree with you", "con", "a", "di"],
+    ["Sono contrario ____ aumento", "I am against a raise", "all'", "al", "per l'"],
+    ["È successo tutto ____ caso", "Everything happened by chance", "per", "a", "di"],
+    ["È successo tutto ____ colpa tua", "It all happened because of you", "per", "a", "di"],
+    ["Grazie ____ aiuto", "Thanks for the help", "per l'", "dell'", "al"],
+    ["Mi scuso ____ ritardo", "I apologize for the delay", "per il", "del", "al"],
+    ["Mi arrabbio spesso ____ lui", "I often get angry with him", "con", "a", "per"],
+    ["Sono felice ____ vederti", "I'm happy to see you", "di", "per", "a"],
+    ["Sono felice ____ risultato", "I'm happy about the result", "del", "al", "per il"],
+    ["Mi preoccupo ____ futuro", "I worry about the future", "del", "al", "per il"],
+    ["Mi preoccupo ____ te", "I worry about you", "per", "di", "a"],
+    ["Dipende ____ situazione", "It depends on the situation", "dalla", "della", "alla"],
+    ["Mi lamento sempre ____ lavoro", "I always complain about work", "del", "dal", "al"],
+    ["Partecipo spesso ____ riunioni", "I often participate in meetings", "alle", "nelle", "per le"],
+    ["Sono specializzato ____ sviluppo backend", "I specialize in backend development", "in", "a", "di"],
+    ["Ho esperienza ____ questo settore", "I have experience in this field", "in", "a", "di"],
+    ["Mi occupo ____ clienti esteri", "I deal with foreign clients", "di", "con", "per"],
+    ["Sono responsabile ____ clienti esteri", "I am responsible for foreign clients", "dei", "ai", "per i"],
+    ["Ho parlato ____ capo", "I spoke with the boss", "con il", "al", "nel"],
+    ["Ho parlato ____ problema", "I talked about the problem", "del", "dal", "al"],
+    ["Mi sono dimenticato ____ appuntamento", "I forgot the appointment", "dell'", "all'", "nell'"],
+    ["Mi sono ricordato ____ appuntamento", "I remembered the appointment", "dell'", "all'", "nell'"],
+    ["È vietato fumare ____ edificio", "Smoking is forbidden in the building", "nell'", "all'", "sull'"],
+    ["È vietato fumare ____ balcone", "Smoking is forbidden on the balcony", "sul", "nel", "al"],
+    ["Ho messo il telefono ____ modalità silenziosa", "I put the phone on silent mode", "in", "a", "su"],
+    ["Sono rimasto ____ casa tutto il giorno", "I stayed at home all day", "a", "in", "da"],
+    ["Vado spesso ____ fare la spesa", "I often go grocery shopping", "a", "in", "per"],
+    ["Ho qualcosa ____ sistemare", "I have something to fix", "da", "per", "di"],
+    ["Non ho tempo ____ uscire", "I don't have time to go out", "per", "di", "da"],
+    ["Ho finito ____ lavorare", "I finished working", "di", "a", "per"],
+    ["Sto pensando ____ cambiare lavoro", "I'm thinking about changing jobs", "di", "a", "su"],
+    ["Mi sono trasferito ____ nuovo appartamento", "I moved into a new apartment", "in un", "a un", "nel"],
+    ["Mi sono trasferito ____ Milano", "I moved to Milan", "a", "in", "da"],
+    ["Mi sono trasferito ____ Germania", "I moved to Germany", "in", "a", "da"],
+    ["Sono stato ____ Germania per lavoro", "I was in Germany for work", "in", "a", "da"],
+    ["Ho mandato una mail ____ cliente", "I sent an email to the client", "al", "nel", "dal"],
+    ["Ho ricevuto una mail ____ cliente", "I received an email from the client", "dal", "al", "nel"],
+    ["Sono interessato ____ posizione", "I am interested in the position", "alla", "nella", "per la"],
+    ["Mi candido ____ posizione", "I apply for the position", "alla", "nella", "per la"],
+    ["Mi preparo ____ colloquio", "I prepare for the interview", "per il", "al", "nel"],
+    ["Sono pronto ____ colloquio", "I am ready for the interview", "per il", "al", "nel"],
+    ["Ho firmato il contratto ____ tre mesi", "I signed the contract for three months", "per", "da", "di"],
+    ["Il contratto è valido ____ tre mesi", "The contract is valid for three months", "per", "da", "di"],
+    ["Lavoro qui ____ gennaio", "I have been working here since January", "da", "per", "di"],
+    ["Lavoro qui ____ tre mesi", "I have been working here for three months", "da", "per", "di"],
+    ["Sono in ritardo ____ traffico", "I'm late because of traffic", "per il", "dal", "al"],
+    ["Ho lasciato le chiavi ____ macchina", "I left the keys in the car", "in", "a", "nella"],
+    ["Sono ____ fretta", "I'm in a hurry", "di", "in", "a"],
+    ["Sono ____ ritardo", "I'm late", "in", "a", "di"],
+    ["Sono ____ anticipo", "I'm early", "in", "a", "di"],
+    ["Vado ____ fretta", "I'm rushing", "di", "in", "a"],
+    ["Fare qualcosa ____ fretta", "To do something quickly", "di", "in", "a"],
+    ["Sono ____ crisi", "I'm in crisis", "in", "a", "di"],
+    ["Sono ____ forma", "I'm in shape", "in", "a", "di"],
+    ["Sono ____ dieta", "I'm on a diet", "a", "in", "di"],
+    ["Sono ____ malumore", "I'm in a bad mood", "di", "in", "a"],
+    ["Essere ____ buon umore", "To be in a good mood", "di", "in", "a"],
+    ["Sono ____ panico", "I'm in panic", "in", "a", "di"],
+    ["Sono ____ dubbio", "I'm in doubt", "in", "a", "di"],
+    ["Mettere ____ dubbio", "To question something", "in", "a", "di"],
+    ["Andare ____ pezzi", "To fall apart", "a", "in", "di"],
+    ["Essere ____ pezzi", "To be exhausted", "a", "in", "di"],
+    ["Essere ____ cavallo", "To be on top / winning", "a", "in", "di"],
+    ["Essere ____ terra", "To be broke / devastated", "a", "in", "di"],
+    ["Andare ____ letto", "To go to bed", "a", "in", "di"],
+    ["Essere ____ letto", "To be in bed", "a", "in", "di"],
+    ["Essere ____ giro", "To be around/out", "in", "a", "di"],
+    ["Andare ____ giro", "To go around", "in", "a", "di"],
+    ["Essere ____ mezzo", "To be in the way", "di", "in", "a"],
+    ["Stare ____ zitti", "To stay quiet", "-", "in", "a"],
+    ["Dire qualcosa ____ caso", "To say something randomly", "a", "in", "di"],
+    ["Fare qualcosa ____ caso", "To do something randomly", "a", "in", "di"],
+    ["Essere ____ caso", "To be random/coincidental", "un", "in", "di"],
+    ["Essere ____ parte", "To be biased / take sides", "di", "in", "a"],
+    ["Prendere ____ giro", "To make fun of", "in", "a", "di"],
+    ["Mettere ____ posto", "To fix / tidy up", "a", "in", "di"],
+    ["Essere ____ posto", "To be fine / okay", "a", "in", "di"],
+    ["Fare ____ testa propria", "To do as one pleases", "di", "a", "in"],
+    ["Essere ____ testa dura", "To be stubborn", "di", "a", "in"],
+    ["Essere ____ moda", "To be fashionable", "di", "in", "a"],
+    ["Andare ____ moda", "To become fashionable", "di", "in", "a"],
+    ["È colpa ____ Marco", "It's Marco's fault", "di", "a", "da"],
+    ["Andare ____ fuoco", "To catch fire", "a", "in", "di"],
+    ["Essere ____ fuoco", "To be furious", "a", "in", "di"],
+    ["Essere ____ debito", "To be in debt", "in", "a", "di"],
+    ["Mettere ____ pressione", "To put under pressure", "sotto", "in", "a"],
+    ["Essere ____ pressione", "To be under pressure", "sotto", "in", "a"],
+    ["Andare ____ fondo", "To get to the bottom", "a", "in", "di"],
+    ["Essere ____ fondo", "To be at the bottom", "in", "a", "di"],
+    ["Essere ____ giro di boa", "To be at a turning point", "al", "nel", "in"],
+    ["Essere ____ linea", "To be in line / aligned", "in", "a", "di"],
+    ["Mettersi ____ fila", "To stand in line", "in", "a", "di"],
+    ["Essere ____ fila", "To be in line", "in", "a", "di"],
+    ["Essere ____ contatto con", "To be in touch with", "in", "a", "di"],
+    ["Mettersi ____ contatto con", "To get in touch with", "in", "a", "di"],
+    ["Essere ____ difficoltà", "To be in difficulty", "in", "a", "di"],
+    ["Mettere qualcuno ____ difficoltà", "To put someone in difficulty", "in", "a", "di"],
+    ["Essere ____ attesa di", "To be waiting for (formal)", "in", "a", "di"],
+    ["Essere ____ vista di", "With a view to / in preparation for", "in", "a", "di"],
+    ["Essere ____ grado di", "To be able to", "in", "a", "di"],
+    ["Essere ____ grado", "To be capable", "in", "a", "di"],
+    ["Essere ____ moda ultimamente", "To be trendy lately", "di", "in", "a"],
+    ["Essere ____ rotta di collisione", "To be on a collision course", "in", "a", "di"],
+    ["Essere ____ rotta con qualcuno", "To be on bad terms", "in", "a", "di"],
+    ["Essere ____ mano a qualcuno", "To be in someone's hands", "in", "a", "di"],
+    ["Prendere qualcosa ____ mano", "To take in hand / handle", "in", "a", "di"],
+    ["Vado ____ Roma", "I go to Rome", "a", "in", "da"],
+    ["Vado ____ Italia", "I go to Italy", "in", "a", "da"],
+    ["Vado ____ Stati Uniti", "I go to the United States", "negli", "nei", "in"],
+    ["Vado ____ centro", "I go downtown", "in", "a", "nel"],
+    ["Vado ____ centro commerciale", "I go to the mall", "al", "nel", "in"],
+    ["Sono ____ centro", "I am downtown", "in", "al", "nel"],
+    ["Sono ____ centro commerciale", "I am at the mall", "nel", "al", "in"],
+    ["Vado ____ scuola", "I go to school (institution)", "a", "alla", "in"],
+    ["Vado ____ scuola nuova", "I go to the new school", "alla", "a", "in"],
+    ["Sono ____ scuola", "I am at school", "a", "alla", "in"],
+    ["Sono ____ scuola nuova", "I am at the new school", "nella", "alla", "a"],
+    ["Vado ____ casa", "I go home", "a", "in", "da"],
+    ["Il libro è scritto ____ Marco", "The book is written by Marco", "da", "di", "con"],
+    ["Il libro ____ Marco", "Marco's book", "di", "da", "del"],
+    ["È fatto ____ legno", "It is made of wood", "di", "da", "con"],
+    ["È fatto ____ mio padre", "It is made by my father", "da", "di", "con"],
+    ["Parlo ____ te", "I talk about you", "di", "a", "su"],
+    ["Parlo ____ te domani", "I talk to you tomorrow", "con", "a", "di"],
+    ["Penso ____ te", "I think about you", "a", "di", "su"],
+    ["Mi ricordo ____ te", "I remember you", "di", "a", "su"],
+    ["Mi ricordo ____ fare la spesa", "I remember to do the shopping", "di", "a", "per"],
+    ["Sono pronto ____ uscire", "I am ready to go out", "a", "di", "per"],
+    ["Sono pronto ____ esame", "I am ready for the exam", "per l'", "all'", "nell'"],
+    ["Sono interessato ____ politica", "I am interested in politics", "alla", "in", "per la"],
+    ["Mi interesso ____ politica", "I am interested in politics (verb)", "di", "a", "per"],
+    ["Ho paura ____ cani", "I am afraid of dogs", "dei", "ai", "nei"],
+    ["Ho paura ____ perdere il lavoro", "I am afraid of losing my job", "di", "da", "per"],
+    ["Sono sicuro ____ risultato", "I am sure about the result", "del", "al", "nel"],
+    ["Sono sicuro ____ vincere", "I am sure to win", "di", "a", "per"],
+    ["Dipende ____ te", "It depends on you", "da", "di", "a"],
+    ["Dipende ____ situazione", "It depends on the situation", "dalla", "della", "alla"],
+    ["Lavoro ____ progetto", "I work on the project", "al", "sul", "nel"],
+    ["Mi concentro ____ progetto", "I focus on the project", "sul", "al", "nel"],
+    ["Sono ____ ritardo", "I am late", "in", "a", "di"],
+    ["Arrivo ____ ritardo", "I arrive late", "in", "a", "di"],
+    ["Vado ____ ritardo", "I run late", "in", "a", "di"],
+    ["Studio italiano ____ tre anni", "I have been studying Italian for three years", "da", "per", "di"],
+    ["Ho studiato italiano ____ tre anni", "I studied Italian for three years", "per", "da", "di"],
+    ["Sono qui ____ tre giorni", "I have been here for three days", "da", "per", "di"],
+    ["Resto qui ____ tre giorni", "I will stay here for three days", "per", "da", "di"],
+    ["Parto ____ due ore", "I leave in two hours", "tra", "per", "da"],
+    ["Parto ____ due ore di ritardo", "I leave with two hours delay", "con", "per", "di"],
+    ["È diverso ____ me", "It is different from me", "da", "di", "a"],
+    ["È diverso ____ quello", "It is different from that", "da", "di", "a"],
+    ["Sono abituato ____ freddo", "I am used to the cold", "al", "nel", "del"],
+    ["Mi abituo ____ freddo", "I get used to the cold", "al", "nel", "del"],
+    ["Sono stanco ____ lavorare", "I am tired of working", "di", "da", "per"],
+    ["Sono stanco ____ lavoro", "I am tired from work", "del", "dal", "nel"],
+    ["Mi vergogno ____ errore", "I am ashamed of the mistake", "dell'", "all'", "nell'"],
+    ["Mi accorgo ____ errore", "I notice the mistake", "dell'", "all'", "nell'"],
+    ["Mi pento ____ scelta", "I regret the choice", "della", "alla", "per la"],
+    ["Sono responsabile ____ progetto", "I am responsible for the project", "del", "dal", "nel"],
+    ["Mi occupo ____ progetto", "I deal with the project", "del", "al", "sul"],
+    ["Partecipo ____ progetto", "I participate in the project", "al", "nel", "sul"],
+    ["Vengo ____ Milano", "I come from Milan", "da", "di", "in"],
+    ["Sono ____ Milano", "I am from Milan (origin)", "di", "da", "in"],
+    ["Abito ____ Milano", "I live in Milan", "a", "in", "da"],
+    ["Ho lasciato l'auto ____ parcheggio.", "I left the car on the parking", "nel", "sul", "al"],
+    ["Metti la spazzatura ____ cestino.", "Put the trash in the bin", "nel", "al", "per"],
+    ["Vai ____ tuo posto", "Go to your place", "al", "nel", "dal"],
+];
+
+let correctCount = 0;
+let totalCount = 0;
+let remainingQuestions = [];
+
+function shuffle(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+function loadQuestion() {
+
+  if (remainingQuestions.length === 0) {
+    endGame();
+    return;
+  }
+
+  const randomIndex = Math.floor(Math.random() * remainingQuestions.length);
+  const q = remainingQuestions.splice(randomIndex, 1)[0]; // delete q from list
+
+  const sentenceEl = document.getElementById("sentence");
+  const translationEl = document.getElementById("translation");
+  const answersEl = document.getElementById("answers");
+
+  sentenceEl.innerHTML = q[0];
+  translationEl.innerText = q[1];
+  answersEl.innerHTML = "";
+
+  const correctAnswer = q[2];
+  const options = shuffle([q[2], q[3], q[4]]);
+
+  options.forEach(option => {
+    const btn = document.createElement("button");
+    btn.innerText = option;
+    btn.onclick = () => checkAnswer(option, correctAnswer, q[0]);
+    answersEl.appendChild(btn);
+  });
+}
+
+function checkAnswer(selected, correct, sentenceTemplate) {
+  const sentenceEl = document.getElementById("sentence");
+  const answersEl = document.getElementById("answers");
+
+  totalCount++;
+
+  if (selected === correct) {
+    correctCount++;
+    sentenceEl.innerHTML = sentenceTemplate.replace("____", `<span class="correct">${selected}</span>`);
+  } else {
+    sentenceEl.innerHTML = sentenceTemplate.replace("____", `<span class="wrong">${correct}</span>`);
+  }
+
+  answersEl.innerHTML = "";
+
+  updateScore();
+
+  if (selected === correct) {
+      setTimeout(loadQuestion, 900);  // timeout when right
+  } else {
+      setTimeout(loadQuestion, 2000); // timeout when wrong
+  }
+}
+
+function updateScore() {
+  const scoreEl = document.getElementById("score");
+  const percentage = totalCount === 0 ? 0 : Math.round((correctCount / totalCount) * 100);
+  scoreEl.innerText = `Precisione: ${percentage}%`;
+}
+
+function endGame() {
+  const sentenceEl = document.getElementById("sentence");
+  const translationEl = document.getElementById("translation");
+  const answersEl = document.getElementById("answers");
+
+  sentenceEl.innerHTML = "LA FINE 🎉";
+  translationEl.innerHTML = "";
+  answersEl.innerHTML = "";
+
+  const percentage = Math.round((correctCount / totalCount) * 100);
+  document.getElementById("score").innerText =
+    `Risultato: ${percentage}%`;
+}
+
+remainingQuestions = [...questions];
+loadQuestion();
+</script>
+
+</body>
+</html>
